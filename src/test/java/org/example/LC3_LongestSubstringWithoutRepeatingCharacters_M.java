@@ -39,6 +39,22 @@ import java.util.stream.Stream;
 /// Explanation: The answer is "wke", with the length of 3.
 /// Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
 /// ```
+/// **Example 4:**
+/// ```
+/// Input: s = "IUSKJSDNMRN7N274auuuGFBNOUTRAOQNMNNJKHWEMGL"
+/// Output: 10
+/// Explanation:
+/// IUSKJ = 5
+///    KJSDNMR = 7
+///         MRN7 = 4
+/// 		   7N2 = 3
+/// 		    N274au = 6
+/// 			      u = 1
+/// 				   uGFBNOUTRA = 10
+/// 				         UTRAOQNM = 8
+/// 						        MN = 3
+/// 								  NJKHWEMGL = 9
+/// ```
 ///
 /// @author Prateek Kumar
 /// @Created: 14-May, 2025
@@ -54,7 +70,7 @@ public class LC3_LongestSubstringWithoutRepeatingCharacters_M {
                 Arguments.of("abcabcbb", 3),
                 Arguments.of("bbbbb", 1),
                 Arguments.of("pwwkew", 3),
-                Arguments.of("IUSKJSDNMRXWYUQONM562762109SANBSAHGFBNGSERFSAKMJfdgah", 13)
+                Arguments.of("IUSKJSDNMRN7N274auuuGFBNOUTRAOQNMNNJKHWEMGL", 10)
         );
     }
 
@@ -67,35 +83,36 @@ public class LC3_LongestSubstringWithoutRepeatingCharacters_M {
     }
     public int approach_1_brute_force(String s) {
         int length = 0;
-        char[] charArray = s.toCharArray();
-        for(int i=0; i<=charArray.length-1; i++){
-            Set<Character> characters = new HashSet<>();
-            characters.add(charArray[i]);
+        char[] arr = s.toCharArray();
+        for (int i = 0; i < arr.length; i++) {
+            Set<Character> cache = new HashSet<>();
+            cache.add(arr[i]);
 
-            for(int j=i+1; j<charArray.length; j++){
-                if(characters.contains(charArray[j])) break;
-                else characters.add(charArray[j]);
+            for (int j = i + 1; j < arr.length; j++) {
+                if (cache.contains(arr[j])) break;
+                else cache.add(arr[j]);
             }
-
-            length= Math.max(characters.size(), length);
+            length = Math.max(length, cache.size());
         }
         return length;
     }
 
     @ParameterizedTest
     @MethodSource("test_cases")
-    @DisplayName("Approach 1: Using Hash Map")
+    @DisplayName("Approach 2: Using Hash Map")
     public void test_approach_2(String s, int expected) {
         int actual = approach_2_hashMapCache(s);
         Assertions.assertEquals(expected, actual);
     }
     public int approach_2_hashMapCache(String s) {
+        int length = 0;
         char[] arr = s.toCharArray();
-        int length=0;
         Map<Character, Integer> cache = new HashMap<>();
-        for (int start=0, end=0; end< arr.length; end++){
-            char chr = s.charAt(end);
-            start = (cache.containsKey(chr)) ? Math.max(start, cache.get(chr)) : start;
+        for (int start = 0, end = 0; end < arr.length; end++) {
+            char chr = arr[end];
+            if (cache.containsKey(chr) && cache.get(chr) > start) {
+                start = cache.get(chr);
+            }
             cache.put(chr, end + 1);
             length = Math.max(length, end - start + 1);
         }
@@ -104,18 +121,20 @@ public class LC3_LongestSubstringWithoutRepeatingCharacters_M {
 
     @ParameterizedTest
     @MethodSource("test_cases")
-    @DisplayName("Approach 1: Using int[256] array")
+    @DisplayName("Approach 3: Using int[256] array")
     public void test_approach_3(String s, int expected) {
         int actual = approach_3_arrayCache(s);
         Assertions.assertEquals(expected, actual);
     }
     public int approach_3_arrayCache(String s) {
+        int length = 0;
         char[] arr = s.toCharArray();
-        int length=0;
         int[] cache = new int[256];
-        for (int start=0, end=0; end< arr.length; end++){
-            char chr = s.charAt(end);
-            start = (cache[chr] > 0) ? Math.max(start, cache[chr]) : start;
+        for (int start = 0, end = 0; end < arr.length; end++) {
+            char chr = arr[end];
+            if (cache[chr] > 0 && cache[chr] > start) {
+                start = cache[chr];
+            }
             cache[chr] = end + 1;
             length = Math.max(length, end - start + 1);
         }
@@ -131,6 +150,8 @@ public class LC3_LongestSubstringWithoutRepeatingCharacters_M {
         Assertions.assertEquals(expected, actual);
     }
     public int practice(String s) {
-        return 0;
+        int length = 0;
+        char[] arr = s.toCharArray();
+        return length;
     }
 }
